@@ -38,29 +38,44 @@ export default function Login({ onLoggedIn }) {
 
   return (
     <div className="auth-wrap">
+      <div className="auth-logo">CR</div>
+      <h1 className="auth-title">CodeReview <span className="ai">AI</span></h1>
+      <p className="auth-tagline">AI-powered code quality assistant</p>
+
       <div className="auth-card">
-        <h1>🔍 AI Code Review Assistant</h1>
-        <p className="sub">Static rules + ML, fused into one ranked review.</p>
         <div className="tabs">
           <button className={tab === "login" ? "active" : ""} onClick={() => setTab("login")}>Login</button>
           <button className={tab === "register" ? "active" : ""} onClick={() => setTab("register")}>Register</button>
         </div>
 
         {tab === "login" ? (
-          <form onSubmit={doLogin}>
-            <input placeholder="Username" value={lu} onChange={e => setLu(e.target.value)} />
-            <input placeholder="Password" type="password" value={lp} onChange={e => setLp(e.target.value)} />
-            {loginErr && <div className="error-msg">{loginErr}</div>}
-            <button className="primary" type="submit">Log in</button>
-          </form>
+          <>
+            <h2>Welcome back</h2>
+            <p className="sub">Sign in to continue to your workspace.</p>
+            <form onSubmit={doLogin}>
+              <label className="field-label">Username</label>
+              <input value={lu} onChange={e => setLu(e.target.value)} />
+              <label className="field-label">Password</label>
+              <input type="password" value={lp} onChange={e => setLp(e.target.value)} />
+              {loginErr && <div className="error-msg">{loginErr}</div>}
+              <button className="primary" type="submit">Sign In →</button>
+            </form>
+          </>
         ) : (
-          <form onSubmit={doRegister}>
-            <input placeholder="Choose a username" value={ru} onChange={e => setRu(e.target.value)} />
-            <input placeholder="Choose a password" type="password" value={rp} onChange={e => setRp(e.target.value)} />
-            {regMsg && <div className={regOk ? "success-msg" : "error-msg"}>{regMsg}</div>}
-            <button className="primary" type="submit">Create account</button>
-          </form>
+          <>
+            <h2>Create account</h2>
+            <p className="sub">Set up your workspace in a few seconds.</p>
+            <form onSubmit={doRegister}>
+              <label className="field-label">Choose a username</label>
+              <input value={ru} onChange={e => setRu(e.target.value)} />
+              <label className="field-label">Choose a password</label>
+              <input type="password" value={rp} onChange={e => setRp(e.target.value)} />
+              {regMsg && <div className={regOk ? "success-msg" : "error-msg"}>{regMsg}</div>}
+              <button className="primary" type="submit">Create account</button>
+            </form>
+          </>
         )}
+        <div className="auth-foot">Capstone project · Local authentication</div>
       </div>
     </div>
   );
