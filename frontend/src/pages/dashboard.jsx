@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api.js";
 
-export default function Dashboard() {
+export default function Dashboard({ setPage }) {
   const [rows, setRows] = useState([]);
   const [err, setErr] = useState("");
 
@@ -11,32 +11,48 @@ export default function Dashboard() {
 
   const totalHigh = rows.reduce((a, r) => a + r.n_high, 0);
   const totalFunctions = rows.reduce((a, r) => a + r.n_functions, 0);
-  const maxFn = Math.max(1, ...rows.map(r => r.n_functions));
+  const avgScore = rows.length
+    ? Math.round(rows.reduce((a, r) => a + Math.max(0, 100 - r.n_high * 15), 0) / rows.length)
+    : 0;
 
   return (
     <div className="main">
-      <h2>Dashboard</h2>
+      <div className="eyebrow">AI CODE INTELLIGENCE</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <h2 className="page-title">Analyze. Improve. Ship better code.</h2>
+          <p className="page-sub">Review your code, catch issues early, and track quality over time.</p>
+        </div>
+        <button className="primary" style={{ width: 170 }} onClick={() => setPage("Review")}>+ New Code Review</button>
+      </div>
       {err && <div className="error-msg">{err}</div>}
-      <div className="metrics-row">
-        <div className="metric"><div className="num">{rows.length}</div><div className="label">Total reviews</div></div>
-        <div className="metric"><div className="num">{totalFunctions}</div><div className="label">Functions analyzed</div></div>
-        <div className="metric"><div className="num">{totalHigh}</div><div className="label">High-priority found</div></div>
+
+      <div className="stat-row">
+        <div className="stat-card"><div className="stitle">Total Reviews</div><div className="snum">{rows.length}</div></div>
+        <div className="stat-card high"><div className="stitle">High-Priority Found</div><div className="snum">{totalHigh}</div></div>
+        <div className="stat-card"><div className="stitle">Functions Analyzed</div><div className="snum">{totalFunctions}</div></div>
+        <div className="stat-card"><div className="stitle">Avg. Quality Score</div><div className="snum">{avgScore}/100</div></div>
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Functions analyzed per review</h3>
-        {rows.length === 0 ? <p>No data yet.</p> : (
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 140 }}>
-            {rows.slice().reverse().map(r => (
-              <div key={r.id} title={`#${r.id}: ${r.n_functions} functions, ${r.n_high} high`}
-                   style={{
-                     width: 26,
-                     height: `${(r.n_functions / maxFn) * 100}%`,
-                     background: r.n_high > 0 ? "var(--high)" : "var(--accent)",
-                     borderRadius: 4,
-                   }} />
-            ))}
-          </div>
+        <h3>Recent Reviews</h3>
+        {rows.length === 0 ? (
+          <p style={{ fontFamily: "system-ui, sans-serif", color: "var(--muted)" }}>No reviews yet — run one from New Code Review.</p>
+        ) : (
+          <table>
+            <thead><tr><th>File</th><th>Date</th><th>Functions</th><th>High</th><th>Status</th></tr></thead>
+            <tbody>
+              {rows.slice(0, 8).map(r => (
+                <tr key={r.id}>
+                  <td>{r.file_name}</td>
+                  <td>{r.created_at}</td>
+                  <td>{r.n_functions}</td>
+                  <td>{r.n_high}</td>
+                  <td><span className="status-dot" />Completed</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
